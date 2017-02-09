@@ -6,6 +6,7 @@
 package com.foehn.concurrency;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,8 +24,12 @@ public class ParallelStreamPerformanceImpl {
         return input + 1;
     }
 
-    public void processAllData(List<Integer> data) {
+    public void processAllDataUseStream(List<Integer> data) {
         data.stream().map(a -> processRecord(a)).count();
+    }
+
+    public void processAllDataUseParallelStream(List<Integer> data) {
+        data.parallelStream().map(a -> processRecord(a)).count();
     }
 
     public static void main(String[] args) {
@@ -34,11 +39,24 @@ public class ParallelStreamPerformanceImpl {
         for (int i = 0; i < 4000; i++) {
             data.add(i);
         }
-
         // Process the data 
         long start = System.currentTimeMillis();
-        impl.processAllData(data);
+//        impl.processAllDataUseStream(data);
         double time = (System.currentTimeMillis() - start) / 1000;
-        System.out.println("\nTasks completed in: " + time + " seconds");
+        System.out.println("\nStream tasks completed in: " + time + " seconds");
+        //
+        start = System.currentTimeMillis();
+//        impl.processAllDataUseParallelStream(data);
+        time = (System.currentTimeMillis() - start) / 1000;
+        System.out.println("\nParallelStream tasks completed in: " + time + " seconds");
+        // Uppercase
+        Arrays.asList("jackel", "kangaroo", "lemur", "flamingo", "penguin")
+                .parallelStream()
+                .map(s -> {
+                    System.out.println("s = " + s);
+                    return s.toUpperCase();
+                })
+                .forEach(System.out::println);
+
     }
 }
